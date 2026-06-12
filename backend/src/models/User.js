@@ -1,12 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 
-/*
- * User
- * Single identity for both buyers and sellers.
- * A user becomes a seller only when they complete seller setup
- * (provide a UPI ID). No separate seller registration needed.
- */
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -39,17 +32,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Null for Google OAuth users — they never set a password
-    password_hash: {
-      type: String,
-      default: null,
-      select: false, // Never returned in queries unless explicitly asked
-    },
-
     // Populated only when the user signs up / logs in via Google OAuth
     google_id: {
       type: String,
       default: null,
+      unique: true,
       sparse: true, // Unique index that allows multiple nulls
     },
 
@@ -68,6 +55,8 @@ const userSchema = new mongoose.Schema(
     website: { type: String, default: "" },
     twitter: { type: String, default: "" },
     instagram: { type: String, default: "" },
+    github: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
 
     // Seller fields — only relevant when is_seller is true
     upi_id: {
@@ -81,30 +70,11 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    // Flips to true after email verification
-    is_verified: {
-      type: Boolean,
-      default: false,
-    },
-
     // For future admin panel support
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
-    },
-
-    // OTP-based password reset
-    // Stored as a plain string; you hash it before saving if you want extra security
-    reset_otp: {
-      type: String,
-      default: null,
-      select: false,
-    },
-    otp_expires_at: {
-      type: Date,
-      default: null,
-      select: false,
     },
   },
   {
@@ -112,30 +82,15 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// ── Indexes ──────────────────────────────────────────────────────────────────
-// email is already unique above, which creates an index automatically.
-// google_id uses sparse:true so multiple null values are allowed.
-userSchema.index({ google_id: 1 }, { unique: true, sparse: true });
 
 // ── Instance Methods ──────────────────────────────────────────────────────────
-
-// Hash password before saving (only runs if password_hash was modified)
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password_hash") || !this.password_hash) return next();
-  this.password_hash = await bcrypt.hash(this.password_hash, 12);
-  next();
-});
-
-// Compare a plain-text password against the stored hash
-userSchema.methods.comparePassword = async function (candidate) {
-  return bcrypt.compare(candidate, this.password_hash);
-};
 
 // Return a safe public profile (no sensitive fields)
 userSchema.methods.toPublicProfile = function () {
   return {
     _id: this._id,
     name: this.name,
+    username: this.username,
     email: this.email,
     avatar_url: this.avatar_url,
     bio: this.bio,
@@ -147,4 +102,7 @@ userSchema.methods.toPublicProfile = function () {
   };
 };
 
-module.exports = mongoose.model("User", userSchema);
+const userModel = mongoose.model("User", userSchema);
+
+export default userModel;
+
