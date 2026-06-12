@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({ success: false, message: "404 Route not found" })
+    res.status(404).json({ success: false, message: "404, Route not found" })
 })
 
 
