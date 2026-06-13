@@ -63,6 +63,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    
+    upi_name: {
+      type: String,
+      trim: true,
+      default: null,
+    },
 
     // Flips to true when seller setup is completed (UPI provided)
     is_seller: {

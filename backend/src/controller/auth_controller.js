@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 
-
 // Handle Google OAuth callback: issues JWT and redirects to client dashboard
-export function googleCallback(req, res) {
+export const googleCallback = (req, res) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Authentication failed" });
   }
@@ -23,9 +22,8 @@ export function googleCallback(req, res) {
   res.redirect(`${clientUrl}`);
 }
 
-
 //Logout and clear token cookie
-export async function logout(req, res) {
+export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -35,7 +33,7 @@ export async function logout(req, res) {
 }
 
 //Get current user profile (using protect middleware)
-export async function getMe(req, res) {
+export const getMe = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Not authenticated" });
   }

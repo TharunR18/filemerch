@@ -39,18 +39,7 @@ const productSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      required: true,
-      enum: [
-        "notes",
-        "cheat-sheets",
-        "resume-templates",
-        "source-code",
-        "ebooks",
-        "ui-kits",
-        "design-assets",
-        "notion-templates",
-        "presentations",
-      ],
+      required: [true, "Category is required"],
     },
 
     tags: {
@@ -74,11 +63,9 @@ const productSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Public or signed URL for the downloadable file
-    // Regenerate signed URLs on each download request using file_key
-    file_url: {
+     short_description: {
       type: String,
-      default: null,
+      maxlength: 200
     },
 
     // The R2 object key (path inside your bucket), e.g. "products/abc123/file.zip"
@@ -158,4 +145,4 @@ productSchema.pre("validate", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema);

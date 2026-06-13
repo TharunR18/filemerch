@@ -4,7 +4,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import db from "./src/config/db.js";
 import passport from "./src/config/passport.js";
-import router from "./src/routes/auth_Routes.js";
+import authRouter from "./src/routes/auth_Routes.js";
+import sellerRouter from "./src/routes/seller_Routes.js";
+import productRouter from "./src/routes/product_Routes.js";
 
 
 const app = express();
@@ -23,22 +25,14 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
-
-
-// Auth Routes
-app.use("/api/auth", router);
-
-app.get("/", (req, res) => {
-  res.send("FileMerch API Running");
-});
-
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({ success: false, message: "404, Route not found" })
-})
+app.use("/api/auth", authRouter);
+app.use("/api/seller", sellerRouter);
+app.use("/api/products", productRouter);
+app.get("/", (req, res) => { res.send("FileMerch API Running"); });
+app.use((req, res) => { res.status(404).json({ success: false, message: "404, Route not found" }) })
 
 
 
 app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server running on port ${process.env.PORT}`);
+  console.log(`Server running on port ${process.env.PORT}`);
 })

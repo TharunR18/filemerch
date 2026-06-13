@@ -12,7 +12,7 @@ export async function protect(req, res, next) {
   }
 
   if (!token) {
-    return res.status(401).json({ success: false, message: "Not authorized, token missing" });
+    return res.status(401).json({ success: false, message: "Not authorized, token missing, please login" });
   }
 
   try {
@@ -25,9 +25,18 @@ export async function protect(req, res, next) {
     }
 
     req.user = user;
+    req.userId = user._id; // Attach userId for controllers using req.userId
     next();
+    
   } catch (error) {
     console.error("Auth Middleware Error:", error);
     return res.status(401).json({ success: false, message: "Not authorized, invalid token" });
   }
+}
+
+export function seller(req, res, next) {
+  if (!req.user || !req.user.is_seller) {
+    return res.status(403).json({ success: false, message: "Access denied. Must be a seller." });
+  }
+  next();
 }
