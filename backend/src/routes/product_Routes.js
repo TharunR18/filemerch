@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", getActiveProducts);
 
 // 2. Get Seller's own products (Protected, must be seller)
-router.get("/my-products", protect, seller, getSellerProducts);
+router.get("/myProducts", protect, seller, getSellerProducts);
 
 // 3. Create Product (Protected, must be seller)
 router.post("/", protect, seller, createProduct);

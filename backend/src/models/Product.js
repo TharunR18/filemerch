@@ -36,12 +36,24 @@ const productSchema = new mongoose.Schema(
       required: [true, "Description is required"],
       maxlength: [5000, "Description cannot exceed 5000 characters"],
     },
-
     category: {
       type: String,
       required: [true, "Category is required"],
+      enum: {
+        values: [
+          "Education",
+          "Programming",
+          "Design",
+          "AI",
+          "Business",
+          "Media",
+          "3D & Game Assets",
+          "Productivity",
+          "Others"
+        ],
+        message: "{VALUE} is not a valid category"
+      }
     },
-
     tags: {
       type: [String],
       default: [],
@@ -61,11 +73,6 @@ const productSchema = new mongoose.Schema(
     thumbnail_url: {
       type: String,
       default: null,
-    },
-
-     short_description: {
-      type: String,
-      maxlength: 200
     },
 
     // The R2 object key (path inside your bucket), e.g. "products/abc123/file.zip"
@@ -113,6 +120,11 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    download_count: {
+      type: Number,
+      default: 0
+    }
   },
   {
     timestamps: true,
@@ -135,13 +147,12 @@ productSchema.index({ title: "text", description: "text", tags: "text" });
 
 // Auto-generate slug from title before saving
 // Appends a short random suffix to handle duplicate titles
-productSchema.pre("validate", function (next) {
+productSchema.pre("validate", function () {
   if (this.isModified("title") || this.isNew) {
     const base = slugify(this.title, { lower: true, strict: true });
     const suffix = Math.random().toString(36).substring(2, 7);
     this.slug = `${base}-${suffix}`;
   }
-  next();
 });
 
 export default mongoose.model("Product", productSchema);

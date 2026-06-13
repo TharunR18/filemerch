@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
 
 // 1. Create Product: POST /api/products
@@ -5,7 +6,7 @@ import Product from "../models/Product.js";
 // Validations: Title required, Price >= 10, Category required, Description required
 export const createProduct = async (req, res) => {
     try {
-        const { title, description, short_description, price, category, thumbnail_url, file_key, file_size, file_type, tags } = req.body;
+        const { title, description, price, category, thumbnail_url, file_key, file_size, file_type, tags } = req.body;
         const seller_id = req.userId;
 
         // Validations
@@ -26,7 +27,6 @@ export const createProduct = async (req, res) => {
             seller_id,
             title,
             description,
-            short_description: short_description || null,
             price,
             category,
             thumbnail_url: thumbnail_url || null,
@@ -34,7 +34,7 @@ export const createProduct = async (req, res) => {
             file_size: file_size || null,
             file_type: file_type || null,
             tags: tags || [],
-            is_published: false // created as draft initially (not published)
+            is_published: true
         });
 
         res.status(201).json({
@@ -43,7 +43,6 @@ export const createProduct = async (req, res) => {
             product: {
                 title: product.title,
                 description: product.description,
-                short_description: product.short_description,
                 price: product.price,
                 category: product.category,
                 _id: product._id,
@@ -80,7 +79,7 @@ export const getActiveProducts = async (req, res) => {
     }
 };
 
-// 3. Get Seller's Own Products: GET /api/products/my-products
+// 3. Get Seller's Own Products: GET /api/products/myProducts
 // Must be seller
 export const getSellerProducts = async (req, res) => {
     try {
@@ -132,6 +131,10 @@ export const updateProduct = async (req, res) => {
         const seller_id = req.userId;
         const updates = req.body;
 
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid product ID format" });
+        }
+
         const product = await Product.findById(id);
 
         if (!product) {
@@ -150,7 +153,7 @@ export const updateProduct = async (req, res) => {
 
         // Apply update data
         const allowedUpdates = [
-            "title", "description", "short_description", "price", "category", 
+            "title", "description", "price", "category",
             "thumbnail_url", "file_key", "is_published", "tags"
         ];
 
@@ -183,6 +186,10 @@ export const deleteProduct = async (req, res) => {
         const { id } = req.params;
         const seller_id = req.userId;
 
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid product ID format" });
+        }
+
         const product = await Product.findById(id);
 
         if (!product) {
@@ -205,3 +212,8 @@ export const deleteProduct = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
+
+export const productUpload = async (req,res) => {
+
+}

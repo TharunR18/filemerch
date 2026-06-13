@@ -24,10 +24,18 @@ app.use(
 );
 
 app.use(express.json());
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ success: false, message: "Invalid JSON format" });
+  }
+  next(err);
+});
 app.use(cookieParser());
+
 app.use("/api/auth", authRouter);
 app.use("/api/seller", sellerRouter);
 app.use("/api/products", productRouter);
+
 app.get("/", (req, res) => { res.send("FileMerch API Running"); });
 app.use((req, res) => { res.status(404).json({ success: false, message: "404, Route not found" }) })
 
