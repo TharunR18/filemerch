@@ -120,7 +120,6 @@ const productSchema = new mongoose.Schema(
 );
 
 // ── Indexes ───────────────────────────────────────────────────────────────────
-productSchema.index({ slug: 1 }, { unique: true });
 productSchema.index({ seller_id: 1 });
 productSchema.index({ category: 1, is_published: 1 });
 productSchema.index({ tags: 1 }); // Multikey index — one entry per tag value
