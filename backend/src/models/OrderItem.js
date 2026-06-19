@@ -68,4 +68,7 @@ orderItemSchema.index({ product_id: 1 }); // Sales per product
 // but this index speeds up the OrderItem side of that join
 orderItemSchema.index({ seller_id: 1, product_id: 1 });
 
-module.exports = mongoose.model("OrderItem", orderItemSchema);
+
+const orderItemModel = mongoose.model("OrderItem", orderItemSchema);
+
+export default orderItemModel;

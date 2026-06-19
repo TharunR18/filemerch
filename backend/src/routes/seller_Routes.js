@@ -1,6 +1,6 @@
 import express from "express";
-import { setupSeller, getSellerProfile, updateSellerProfile, getSellerPublicProfile } from '../controller/seller_controller.js';
-import { protect } from '../middleware/protect_middleware.js';
+import { setupSeller, getSellerProfile, updateSellerProfile, getSellerPublicProfile, getSellerDashboard } from '../controller/seller_controller.js';
+import { protect, seller } from '../middleware/protect_middleware.js';
 
 const router = express.Router();
 
@@ -13,7 +13,10 @@ router.get("/profile", protect, getSellerProfile);
 // 3. Update Seller Profile
 router.put("/update", protect, updateSellerProfile);
 
-// 4. Get Public Seller Profile (No protect middleware - it's public!)
+// 4. Get Seller Dashboard Summary
+router.get("/dashboard", protect, seller, getSellerDashboard);
+
+// 5. Get Public Seller Profile (No protect middleware - it's public!)
 router.get("/:username", getSellerPublicProfile);
 
 export default router;

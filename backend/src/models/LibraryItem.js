@@ -60,4 +60,6 @@ const libraryItemSchema = new mongoose.Schema(
 libraryItemSchema.index({ buyer_id: 1, product_id: 1 }, { unique: true });
 libraryItemSchema.index({ buyer_id: 1, purchased_at: -1 }); // Library list, sorted
 
-module.exports = mongoose.model("LibraryItem", libraryItemSchema);
+const libraryItemModel = mongoose.model("LibraryItem", libraryItemSchema);
+
+export default libraryItemModel;

@@ -73,4 +73,6 @@ reviewSchema.index({ product_id: 1, buyer_id: 1 }, { unique: true });
 reviewSchema.index({ product_id: 1, createdAt: -1 }); // Reviews list for a product
 reviewSchema.index({ buyer_id: 1 }); // All reviews by a user
 
-module.exports = mongoose.model("Review", reviewSchema);
+const reviewModel = mongoose.model("Review", reviewSchema);
+
+export default reviewModel;

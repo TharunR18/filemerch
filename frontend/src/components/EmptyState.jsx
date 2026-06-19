@@ -1,0 +1,18 @@
+import '../styles/EmptyState.css';
+
+const EmptyState = ({ icon: Icon, title, description, action }) => {
+  return (
+    <div className="empty-state animate-fade-in-up">
+      {Icon && (
+        <div className="empty-state-icon">
+          <Icon size={48} />
+        </div>
+      )}
+      <h3 className="empty-state-title">{title}</h3>
+      {description && <p className="empty-state-description">{description}</p>}
+      {action && <div className="empty-state-action">{action}</div>}
+    </div>
+  );
+};
+
+export default EmptyState;

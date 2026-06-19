@@ -1,4 +1,7 @@
 import User from "../models/User.js";
+import Product from "../models/Product.js";
+import OrderItem from "../models/OrderItem.js";
+import mongoose from "mongoose";
 
 export const setupSeller = async (req, res) => {
     try {
@@ -178,4 +181,104 @@ export const getSellerPublicProfile = async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
-}
+};
+
+export const getSellerDashboard = async (req, res) => {
+    try {
+        const seller_id = req.userId;
+        const sellerIdObj = new mongoose.Types.ObjectId(seller_id);
+
+        // 1. Dashboard Summary:
+        const totalProducts = await Product.countDocuments({ seller_id });
+
+        const productStats = await Product.aggregate([
+            { $match: { seller_id: sellerIdObj } },
+            {
+                $group: {
+                    _id: null,
+                    totalSales: { $sum: "$total_sales" },
+                    totalDownloads: { $sum: "$download_count" }
+                }
+            }
+        ]);
+
+        const totalSales = productStats[0]?.totalSales || 0;
+        const totalDownloads = productStats[0]?.totalDownloads || 0;
+
+        const revenueStats = await OrderItem.aggregate([
+            { $match: { seller_id: sellerIdObj } },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: "$seller_earning" }
+                }
+            }
+        ]);
+
+        const totalRevenue = (revenueStats[0]?.totalRevenue || 0) / 100;
+
+        // 2. Recent Purchases:
+        const recentPurchases = await OrderItem.find({ seller_id })
+            .populate({
+                path: "order_id",
+                populate: {
+                    path: "buyer_id",
+                    select: "name username email avatar_url"
+                }
+            })
+            .populate("product_id", "title price thumbnail_url slug")
+            .sort({ createdAt: -1 })
+            .limit(5);
+
+        const mappedRecentPurchases = recentPurchases.map(item => ({
+            _id: item._id,
+            product: item.product_id,
+            buyer: item.order_id?.buyer_id || null,
+            price_paid: item.price_at_purchase / 100, // in rupees
+            purchased_at: item.createdAt
+        }));
+
+        // 3. Seller Analytics (Monthly sales/revenue stats for the last 6 months)
+        const analyticsRaw = await OrderItem.aggregate([
+            { $match: { seller_id: sellerIdObj } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" }
+                    },
+                    salesCount: { $sum: 1 },
+                    revenue: { $sum: "$seller_earning" }
+                }
+            },
+            { $sort: { "_id.year": -1, "_id.month": -1 } },
+            { $limit: 6 }
+        ]);
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const analytics = analyticsRaw.map(item => {
+            const monthStr = monthNames[item._id.month - 1];
+            return {
+                label: `${monthStr} ${item._id.year}`,
+                sales: item.salesCount,
+                revenue: item.revenue / 100 // in Rupees
+            };
+        }).reverse();
+
+        res.status(200).json({
+            success: true,
+            message: "Seller dashboard statistics fetched successfully",
+            summary: {
+                totalProducts,
+                totalSales,
+                totalRevenue,
+                totalDownloads
+            },
+            recentPurchases: mappedRecentPurchases,
+            analytics
+        });
+    } catch (error) {
+        console.error("Seller Dashboard Error:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};

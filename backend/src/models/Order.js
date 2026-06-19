@@ -55,4 +55,6 @@ const orderSchema = new mongoose.Schema(
 orderSchema.index({ buyer_id: 1, createdAt: -1 }); // Buyer's order history
 // razorpay_order_id is already unique above (auto-indexed)
 
-module.exports = mongoose.model("Order", orderSchema);
+const orderModel = mongoose.model("Order", orderSchema);
+
+export default orderModel;
