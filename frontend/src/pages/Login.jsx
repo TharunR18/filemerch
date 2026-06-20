@@ -7,6 +7,7 @@ import authVideo from '../assets/auth_page-video.mp4';
 import toast from 'react-hot-toast';
 import '../styles/Login.css';
 
+
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -32,11 +33,6 @@ const Login = () => {
         </div>
         <p className="login-subtitle">Sign in to access the digital marketplace</p>
 
-        <button className="login-google-btn" onClick={login}>
-          <FcGoogle size={22} />
-          <span>Continue with Google</span>
-        </button>
-
         <div className="login-video-container">
           <video
             src={authVideo}
@@ -48,14 +44,20 @@ const Login = () => {
           />
         </div>
 
+        <hr className="login-divider" />
+
+        <button className="login-google-btn" onClick={login}>
+          <FcGoogle size={22} />
+          <span>Continue with Google</span>
+        </button>
+
+        <hr className="login-divider" />
+
         <p className="login-terms">
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </p>
-      </div>
 
-      {/* Decorative blobs */}
-      <div className="login-blob login-blob--1" />
-      <div className="login-blob login-blob--2" />
+      </div>
     </div>
   );
 };

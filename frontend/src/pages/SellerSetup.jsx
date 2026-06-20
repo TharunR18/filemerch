@@ -101,7 +101,7 @@ const SellerSetup = () => {
             </div>
 
             {/* UPI Info */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)' }}>
               <div className="form-group">
                 <label className="form-label" htmlFor="upi_id">
                   <CreditCard size={14} /> UPI ID
@@ -169,7 +169,7 @@ const SellerSetup = () => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)' }}>
               <div className="form-group">
                 <label className="form-label" htmlFor="twitter">Twitter</label>
                 <input
@@ -197,7 +197,7 @@ const SellerSetup = () => {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)' }}>
               <div className="form-group">
                 <label className="form-label" htmlFor="github">GitHub</label>
                 <input

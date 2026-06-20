@@ -200,7 +200,7 @@ const EditProduct = () => {
             </div>
 
             {/* Category & Price */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)' }}>
               <div className="form-group">
                 <label className="form-label" htmlFor="category">Category</label>
                 <select

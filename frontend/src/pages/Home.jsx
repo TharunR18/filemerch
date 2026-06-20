@@ -4,7 +4,7 @@ import API from '../api/axios';
 import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
 import { useAuth } from '../context/AuthContext';
-import { ArrowRight, Package, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Aurora from '../components/Aurora';
 import '../styles/Home.css';
 
@@ -43,7 +43,7 @@ const Home = () => {
         </div>
         <div className="container hero-content animate-fade-in-up">
           <h1 className="hero-title">
-            Elevate Your <br />
+            The Marketplace for <br />
             <span className="hero-title-gradient">Digital Assets</span>
           </h1>
           <p className="hero-subtitle">

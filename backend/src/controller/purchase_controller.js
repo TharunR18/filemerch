@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import crypto from "crypto";
+import razorpayInstance from "../config/razorpay.js";
 import Order from "../models/Order.js";
 import OrderItem from "../models/OrderItem.js";
 import LibraryItem from "../models/LibraryItem.js";
@@ -7,7 +9,7 @@ import DownloadHistory from "../models/DownloadHistory.js";
 import { generateSignedUrl } from "../services/storageService.js";
 
 // 1. Buy Product (POST /api/purchases/buy/:productId)
-// Simulates a successful checkout in demo mode
+// Creates a Razorpay Order and returns the details
 export const buyProduct = async (req, res) => {
     try {
         const { productId } = req.params;
@@ -36,12 +38,19 @@ export const buyProduct = async (req, res) => {
         // Amount in paise (1 INR = 100 Paise)
         const amountInPaise = Math.round(product.price * 100);
 
-        // Create Order (Simulated / Demo Mode)
+        // Create Razorpay Order
+        const options = {
+            amount: amountInPaise,
+            currency: "INR",
+            receipt: `receipt_order_${Date.now()}`
+        };
+        const razorpayOrder = await razorpayInstance.orders.create(options);
+
+        // Create Order (Status: created)
         const order = await Order.create({
             buyer_id,
-            razorpay_order_id: `order_demo_${Math.random().toString(36).substring(2, 15)}`,
-            razorpay_payment_id: `pay_demo_${Math.random().toString(36).substring(2, 15)}`,
-            status: "paid",
+            razorpay_order_id: razorpayOrder.id,
+            status: "created",
             total_amount: amountInPaise
         });
 
@@ -55,29 +64,99 @@ export const buyProduct = async (req, res) => {
             seller_earning: amountInPaise
         });
 
-        // Create LibraryItem to grant ownership/access
-        const libraryItem = await LibraryItem.create({
-            buyer_id,
-            product_id: product._id,
-            order_item_id: orderItem._id,
-            purchased_at: new Date()
-        });
-
-        // Increase product sales counter
-        product.total_sales = (product.total_sales || 0) + 1;
-        await product.save();
-
         res.status(201).json({
             success: true,
-            message: "Product purchased successfully (Demo Mode)",
+            message: "Razorpay order created successfully",
+            key_id: process.env.RAZORPAY_KEY_ID,
             orderId: order._id,
-            libraryItem
+            razorpayOrderId: razorpayOrder.id,
+            amount: amountInPaise,
+            currency: "INR"
         });
     } catch (error) {
         console.error("Buy Product Error:", error);
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
+// 1b. Verify Razorpay Payment (POST /api/purchases/verify)
+export const verifyPayment = async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        const buyer_id = req.userId;
+
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.status(400).json({ success: false, message: "Missing required payment fields" });
+        }
+
+        // Verify Signature
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSignature = crypto
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+            .update(body.toString())
+            .digest("hex");
+
+        const isSignatureValid = expectedSignature === razorpay_signature;
+
+        if (!isSignatureValid) {
+            return res.status(400).json({ success: false, message: "Payment verification failed: Invalid signature" });
+        }
+
+        // Find the corresponding order
+        const order = await Order.findOne({ razorpay_order_id });
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        // If already paid, return success (Idempotency)
+        if (order.status === "paid") {
+            return res.status(200).json({
+                success: true,
+                message: "Payment verified successfully (Already Processed)",
+                orderId: order._id
+            });
+        }
+
+        // Update Order
+        order.status = "paid";
+        order.razorpay_payment_id = razorpay_payment_id;
+        await order.save();
+
+        // Find OrderItems for this order
+        const orderItems = await OrderItem.find({ order_id: order._id });
+
+        // Create LibraryItems and update product sales
+        const libraryItems = [];
+        for (const item of orderItems) {
+            const existingLib = await LibraryItem.findOne({ buyer_id: order.buyer_id, product_id: item.product_id });
+            if (!existingLib) {
+                const libraryItem = await LibraryItem.create({
+                    buyer_id: order.buyer_id,
+                    product_id: item.product_id,
+                    order_item_id: item._id,
+                    purchased_at: new Date()
+                });
+                libraryItems.push(libraryItem);
+
+                // Update product sales
+                await Product.findByIdAndUpdate(item.product_id, {
+                    $inc: { total_sales: 1 }
+                });
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Payment verified successfully",
+            orderId: order._id,
+            libraryItems
+        });
+    } catch (error) {
+        console.error("Verify Payment Error:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 
 // 2. Get My Purchases (GET /api/purchases/my-purchases)
 export const getMyPurchases = async (req, res) => {

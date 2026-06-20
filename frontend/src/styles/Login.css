@@ -10,7 +10,7 @@
 
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 720px;
   padding: var(--space-12) var(--space-10);
   text-align: center;
   position: relative;
@@ -74,30 +74,6 @@
   line-height: var(--line-height-relaxed);
 }
 
-/* Decorative background blobs */
-.login-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-.login-blob--1 {
-  width: 400px;
-  height: 400px;
-  background: var(--color-accent);
-  top: -100px;
-  right: -100px;
-}
-
-.login-blob--2 {
-  width: 300px;
-  height: 300px;
-  background: #6366f1;
-  bottom: -50px;
-  left: -50px;
-}
 
 .login-video-container {
   margin-top: var(--space-8);
@@ -108,10 +84,22 @@
   line-height: 0;
   box-shadow: var(--shadow-glow-lg);
   transform: translateZ(0); /* For rounding overflow in webkit */
+  aspect-ratio: 16 / 9;
+  width: 100%;
 }
 
 .login-video {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
+
+.login-divider {
+  border: 0;
+  height: 1px;
+  background: var(--color-surface-border);
+  margin: var(--space-8) 0;
+}
+
+

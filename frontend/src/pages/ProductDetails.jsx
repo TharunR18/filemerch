@@ -7,9 +7,24 @@ import ProductCard from '../components/ProductCard';
 import EmptyState from '../components/EmptyState';
 import ConfirmDialog from '../components/ConfirmDialog';
 import UserAvatar from '../components/UserAvatar';
-import { Package, Download, Tag, Calendar, User, ExternalLink, ShoppingBag, CheckCircle, Trash2, Edit3, MessageSquare } from 'lucide-react';
+import { Package, Download, Tag, User, ExternalLink, ShoppingBag, CheckCircle, Trash2, Edit3, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 import '../styles/ProductDetails.css';
+
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -78,17 +93,71 @@ const ProductDetails = () => {
   const confirmPurchase = async () => {
     setBuying(true);
     try {
-      await API.post(`/purchases/buy/${product._id}`);
-      toast.success('Purchase successful!');
-      setOwned(true);
-      setPaymentModalOpen(false);
-      setProduct(prev => ({ ...prev, total_sales: (prev.total_sales || 0) + 1 }));
+      const sdkLoaded = await loadRazorpayScript();
+      if (!sdkLoaded) {
+        toast.error('Failed to load Razorpay SDK. Please check your internet connection.');
+        setBuying(false);
+        return;
+      }
+
+      // 1. Create order on backend
+      const res = await API.post(`/purchases/buy/${product._id}`);
+      const { key_id, amount, razorpayOrderId, currency } = res.data;
+
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: key_id,
+        amount: amount,
+        currency: currency,
+        name: 'FileMerch',
+        description: product.title,
+        order_id: razorpayOrderId,
+        handler: async function (response) {
+          setBuying(true);
+          try {
+            // Verify payment on backend
+            const verifyRes = await API.post('/purchases/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyRes.data.success) {
+              toast.success('Purchase successful!');
+              setOwned(true);
+              setPaymentModalOpen(false);
+              setProduct(prev => ({ ...prev, total_sales: (prev.total_sales || 0) + 1 }));
+            } else {
+              toast.error('Payment verification failed');
+            }
+          } catch (err) {
+            toast.error(err.response?.data?.message || 'Payment verification failed');
+          } finally {
+            setBuying(false);
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+        },
+        theme: {
+          color: '#6366f1',
+        },
+        modal: {
+          ondismiss: function () {
+            setBuying(false);
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Purchase failed');
-    } finally {
+      toast.error(err.response?.data?.message || 'Failed to initiate purchase');
       setBuying(false);
     }
   };
+
 
   const handleDownload = async () => {
     try {
