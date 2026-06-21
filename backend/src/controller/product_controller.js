@@ -38,14 +38,14 @@ export const createProduct = async (req, res) => {
 
         // Upload Cover Image
         const thumb_key = `thumbnails/${productId}/${timestamp}-${thumbnail.originalname}`;
-        await uploadFile(thumbnail.buffer, thumb_key);
+        await uploadFile(thumbnail.buffer, thumb_key, thumbnail.mimetype);
         const supabaseUrl = process.env.SUPABASE_URL;
         const bucket = process.env.SUPABASE_BUCKET;
         const thumbnail_url = `${supabaseUrl}/storage/v1/object/public/${bucket}/${thumb_key}`;
 
         // Upload Product File
         const file_key = `products/${productId}/${timestamp}-${file.originalname}`;
-        await uploadFile(file.buffer, file_key);
+        await uploadFile(file.buffer, file_key, file.mimetype);
 
         let parsedTags = [];
         if (tags) {
@@ -345,7 +345,7 @@ export const productUpload = async (req, res) => {
         const file_key = `products/${product._id}/${timestamp}-${req.file.originalname}`;
 
         // Upload file to storage
-        await uploadFile(req.file.buffer, file_key);
+        await uploadFile(req.file.buffer, file_key, req.file.mimetype);
 
         // Update product document in DB
         const fileExtension = req.file.originalname.split('.').pop();
@@ -443,7 +443,7 @@ export const thumbnailUpload = async (req, res) => {
         const timestamp = Math.floor(Date.now() / 1000);
         const file_key = `thumbnails/${product._id}/${timestamp}-${req.file.originalname}`;
 
-        await uploadFile(req.file.buffer, file_key);
+        await uploadFile(req.file.buffer, file_key, req.file.mimetype);
 
         const supabaseUrl = process.env.SUPABASE_URL;
         const bucket = process.env.SUPABASE_BUCKET;

@@ -145,6 +145,10 @@
     padding: var(--space-16) 0 var(--space-10);
   }
 
+  .hero-title br {
+    display: none;
+  }
+
   .hero-stats {
     gap: var(--space-6);
   }

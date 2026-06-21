@@ -9,12 +9,6 @@ const Footer = () => {
     <footer className="footer">
       <div className="container footer-inner">
         <div className="footer-top-row">
-          <div className="footer-brand">
-            <Link to="/" className="footer-logo">
-              <img src={logo} alt="FileMerch Logo" className="footer-logo-img" /> 
-            </Link>
-          </div>
-
           <div className="footer-socials">
             <a href="https://www.linkedin.com/in/tharun2007" target="_blank" rel="noopener noreferrer" className="footer-social-btn" aria-label="LinkedIn">
               <FaLinkedin size={24} />

@@ -4,13 +4,15 @@ import API from '../api/axios';
 import ProductCard from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/LoadingSkeleton';
 import EmptyState from '../components/EmptyState';
-import { User, Globe, Calendar, Package } from 'lucide-react';
+import { User, Globe, Calendar, Package, Settings } from 'lucide-react';
 import { FaTwitter, FaInstagram, FaGithub, FaLinkedin } from 'react-icons/fa';
 import UserAvatar from '../components/UserAvatar';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const SellerProfile = () => {
   const { username } = useParams();
+  const { user } = useAuth();
   const [seller, setSeller] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -93,6 +95,11 @@ const SellerProfile = () => {
 
             {/* Social & Contact Links */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-3)', justifyContent: 'center' }}>
+              {user && seller && user._id === seller._id && (
+                <Link to="/seller/setup" className="btn btn-secondary btn-sm" style={{ gap: 'var(--space-2)' }}>
+                  <Settings size={14} /> Edit Profile
+                </Link>
+              )}
               {seller.website && (
                 <a href={seller.website} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ gap: 'var(--space-2)' }}>
                   <Globe size={14} /> Website

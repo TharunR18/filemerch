@@ -19,7 +19,7 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const featuredRes = await API.get('/products?sort=best-selling');
-        setFeaturedProducts(featuredRes.data.products?.slice(0, 4) || []);
+        setFeaturedProducts(featuredRes.data.products?.slice(0, 3) || []);
       } catch {
         // Silently handle
       } finally {
@@ -47,7 +47,7 @@ const Home = () => {
             <span className="hero-title-gradient">Digital Assets</span>
           </h1>
           <p className="hero-subtitle">
-            Elevate your digital assets with our premium marketplace.      
+            Buy and sell digital assets.
           </p>
           <div className="hero-actions">
             <Link to="/marketplace" className="btn btn-primary btn-lg">
@@ -68,15 +68,15 @@ const Home = () => {
         <div className="container">
           <div className="section-header">
             <div>
-              <h2 className="section-title">Best Selling</h2>
-              <p className="section-subtitle">Top products loved by the community</p>
+              <h2 className="section-title">Top Products</h2>
+              <p className="section-subtitle">We recommend you to check these out.</p>
             </div>
             <Link to="/marketplace?sort=best-selling" className="btn btn-ghost">
               View All <ArrowRight size={16} />
             </Link>
           </div>
           {loading ? (
-            <ProductGridSkeleton count={4} />
+            <ProductGridSkeleton count={3} />
           ) : featuredProducts.length > 0 ? (
             <div className="product-grid">
               {featuredProducts.map((product) => (

@@ -79,7 +79,7 @@ export const setupSeller = async (req, res) => {
                 github: github || "",
                 linkedin: linkedin || ""
             },
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
 
         res.status(200).json({ success: true, message: "Seller setup completed successfully", user });
@@ -136,7 +136,7 @@ export const updateSellerProfile = async (req, res) => {
         if (github !== undefined) updateData.github = github;
         if (linkedin !== undefined) updateData.linkedin = linkedin;
 
-        const user = await User.findByIdAndUpdate(user_id, updateData, { new: true, runValidators: true });
+        const user = await User.findByIdAndUpdate(user_id, updateData, { returnDocument: 'after', runValidators: true });
         res.status(200).json({ success: true, message: "Seller profile updated successfully", user });
     } catch (error) {
         if (error.name === 'ValidationError') {

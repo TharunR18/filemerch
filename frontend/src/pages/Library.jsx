@@ -14,7 +14,8 @@ const Library = () => {
     const fetchLibrary = async () => {
       try {
         const res = await API.get('/purchases/my-purchases');
-        setPurchases(res.data.purchases || []);
+        const validPurchases = (res.data.purchases || []).filter(item => item.product_id);
+        setPurchases(validPurchases);
       } catch (err) {
         toast.error('Failed to load library items');
       } finally {

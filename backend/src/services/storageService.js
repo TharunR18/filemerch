@@ -1,9 +1,10 @@
 import supabase from "../config/supabase.js";
 
-export async function uploadFile(file, path) {
+export async function uploadFile(file, path, contentType) {
+    const options = contentType ? { contentType } : {};
     const { data, error } = await supabase.storage
         .from(process.env.SUPABASE_BUCKET)
-        .upload(path, file);
+        .upload(path, file, options);
 
     if (error) throw error;
     return data;
@@ -18,10 +19,10 @@ export async function deleteFile(path) {
     return data;
 }
 
-export async function generateSignedUrl(path) {
+export async function generateSignedUrl(path, options = {}) {
     const { data, error } = await supabase.storage
         .from(process.env.SUPABASE_BUCKET)
-        .createSignedUrl(path, 60 * 60 * 24);
+        .createSignedUrl(path, 60 * 60 * 24, options);
 
     if (error) throw error;
     return data;

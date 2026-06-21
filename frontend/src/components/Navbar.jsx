@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, Library, User, Store, ChevronDown } from 'lucide-react';
+import { LogOut, LayoutDashboard, Library, User, Store, ChevronDown, Settings } from 'lucide-react';
 import logo from '../assets/logo.png';
 import '../styles/Navbar.css';
 
@@ -37,11 +37,6 @@ const Navbar = () => {
           <img src={logo} alt="FileMerch Logo" className="navbar-logo-img" />
         </Link>
 
-        <div className={`navbar-links ${mobileOpen ? 'navbar-links--open' : ''}`}>
-          <Link to="/marketplace" className="navbar-link" onClick={() => setMobileOpen(false)}>
-            Marketplace
-          </Link>
-        </div>
 
         <div className="navbar-actions">
           {isAuthenticated ? (
@@ -67,10 +62,16 @@ const Navbar = () => {
                     My Library
                   </Link>
                   {isSeller ? (
-                    <Link to="/dashboard" className="navbar-dropdown-item" onClick={() => setDropdownOpen(false)}>
-                      <LayoutDashboard size={16} />
-                      Dashboard
-                    </Link>
+                    <>
+                      <Link to="/dashboard" className="navbar-dropdown-item" onClick={() => setDropdownOpen(false)}>
+                        <LayoutDashboard size={16} />
+                        Dashboard
+                      </Link>
+                      <Link to="/seller/setup" className="navbar-dropdown-item" onClick={() => setDropdownOpen(false)}>
+                        <Settings size={16} />
+                        Store Settings
+                      </Link>
+                    </>
                   ) : (
                     <Link to="/seller/setup" className="navbar-dropdown-item" onClick={() => setDropdownOpen(false)}>
                       <Store size={16} />
@@ -97,13 +98,6 @@ const Navbar = () => {
             </button>
           )}
 
-          <button
-            className="navbar-mobile-toggle"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            <span className={`hamburger ${mobileOpen ? 'hamburger--open' : ''}`} />
-          </button>
         </div>
       </div>
     </nav>

@@ -210,8 +210,14 @@ export const downloadProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: "No file associated with this product yet" });
         }
 
-        // Generate signed URL
-        const signedUrlData = await generateSignedUrl(product.file_key);
+        // Extract original filename from file_key
+        const fileKeyParts = product.file_key.split('/');
+        const filenameWithTimestamp = fileKeyParts[fileKeyParts.length - 1];
+        const dashIndex = filenameWithTimestamp.indexOf('-');
+        const originalName = dashIndex !== -1 ? filenameWithTimestamp.substring(dashIndex + 1) : filenameWithTimestamp;
+
+        // Generate signed URL with the original filename
+        const signedUrlData = await generateSignedUrl(product.file_key, { download: originalName });
         if (!signedUrlData || !signedUrlData.signedUrl) {
             return res.status(500).json({ success: false, message: "Failed to generate download URL" });
         }

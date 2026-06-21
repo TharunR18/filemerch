@@ -523,3 +523,137 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Seller Dashboard Responsiveness ── */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.dashboard-header-buttons {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.dashboard-card {
+  padding: var(--space-6);
+  min-width: 0;
+}
+
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-header-buttons {
+    width: 100%;
+  }
+
+  .dashboard-header-buttons a,
+  .dashboard-header-buttons button {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-card {
+    padding: var(--space-4);
+  }
+
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+/* Recent Sales & Analytics Responsiveness */
+.dashboard-sections {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-8);
+}
+
+.dashboard-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 750px;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-surface-border);
+  vertical-align: middle;
+}
+
+.dashboard-table th {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.dashboard-table td {
+  white-space: nowrap;
+}
+
+.dashboard-table th:first-child,
+.dashboard-table td:first-child {
+  min-width: 280px;
+  white-space: normal;
+}
+
+.dashboard-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.dashboard-analytics-card {
+  padding: var(--space-4);
+  background: var(--color-bg-secondary) !important;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-sections {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: var(--space-3) var(--space-2);
+  }
+  
+  .dashboard-analytics-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+

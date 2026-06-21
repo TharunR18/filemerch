@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { Store, User, CreditCard, Link2, FileText } from 'lucide-react';
+import { Store, User, CreditCard, Link2, FileText, Settings, AlertTriangle } from 'lucide-react';
 
 const SellerSetup = () => {
   const { user, refreshUser } = useAuth();
@@ -21,6 +21,22 @@ const SellerSetup = () => {
     linkedin: ''
   });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || '',
+        upi_id: user.upi_id || '',
+        upi_name: user.upi_name || '',
+        bio: user.bio || '',
+        website: user.website || '',
+        twitter: user.twitter || '',
+        instagram: user.instagram || '',
+        github: user.github || '',
+        linkedin: user.linkedin || ''
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,13 +63,27 @@ const SellerSetup = () => {
 
     setSubmitting(true);
     try {
-      const res = await API.post('/seller/setup', formData);
-      toast.success('Congratulations! You are now a seller.');
+      if (user?.is_seller) {
+        await API.put('/seller/update', {
+          upi_id: formData.upi_id,
+          upi_name: formData.upi_name,
+          bio: formData.bio,
+          website: formData.website,
+          twitter: formData.twitter,
+          instagram: formData.instagram,
+          github: formData.github,
+          linkedin: formData.linkedin
+        });
+        toast.success('Store profile updated successfully!');
+      } else {
+        await API.post('/seller/setup', formData);
+        toast.success('Congratulations! You are now a seller.');
+      }
       // Refresh user context
       await refreshUser(); 
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to complete setup');
+      toast.error(err.response?.data?.message || 'Failed to complete store setup');
     } finally {
       setSubmitting(false);
     }
@@ -65,12 +95,14 @@ const SellerSetup = () => {
         <div className="glass-card" style={{ padding: 'var(--space-8)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
             <div className="avatar avatar-md" style={{ background: 'var(--color-primary-muted)', color: 'var(--color-primary)' }}>
-              <Store size={24} />
+              {user?.is_seller ? <Settings size={24} /> : <Store size={24} />}
             </div>
             <div>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Become a Seller</h1>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>
+                {user?.is_seller ? 'Store Settings' : 'Become a Seller'}
+              </h1>
               <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', marginTop: '2px' }}>
-                Set up your storefront and start selling digital files.
+                {user?.is_seller ? 'Update your storefront details and payment links.' : 'Set up your storefront and start selling digital files.'}
               </p>
             </div>
           </div>
@@ -95,12 +127,25 @@ const SellerSetup = () => {
                   value={formData.username}
                   onChange={handleChange}
                   required
+                  disabled={user?.is_seller}
                 />
               </div>
-              <p className="form-help">Unique store identifier. Lowercase letters, numbers, hyphens, and underscores only. Cannot be changed later.</p>
+              <p className="form-help">
+                {user?.is_seller 
+                  ? 'Store username cannot be changed.' 
+                  : 'Unique store identifier. Lowercase letters, numbers, hyphens, and underscores only. Cannot be changed later.'}
+              </p>
             </div>
 
             {/* UPI Info */}
+            <div style={{ padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-lg)', background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.25)', color: 'var(--color-warning)', display: 'flex', gap: 'var(--space-3)', alignItems: 'flex-start', fontSize: 'var(--font-size-sm)' }}>
+              <AlertTriangle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div>
+                <span style={{ fontWeight: 700, display: 'block', marginBottom: '2px' }}>Demo Mode Notice</span>
+                UPI ID and Account Name are for sample/simulation purposes only. No real money transactions are going to happen on this platform.
+              </div>
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-4)' }}>
               <div className="form-group">
                 <label className="form-label" htmlFor="upi_id">
@@ -226,7 +271,9 @@ const SellerSetup = () => {
             </div>
 
             <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: 'var(--space-2)' }} disabled={submitting}>
-              {submitting ? 'Setting up Store...' : 'Launch Store'}
+              {submitting 
+                ? (user?.is_seller ? 'Saving changes...' : 'Setting up Store...') 
+                : (user?.is_seller ? 'Save Changes' : 'Launch Store')}
             </button>
           </form>
         </div>

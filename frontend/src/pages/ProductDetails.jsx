@@ -271,7 +271,7 @@ const ProductDetails = () => {
                 <h2 className="pd-section-title">Tags</h2>
                 <div className="pd-tags">
                   {product.tags.map((tag, i) => (
-                    <span key={i} className="pd-tag"><Tag size={12} />{tag}</span>
+                    <span key={i} className="pd-tag">#{tag}</span>
                   ))}
                 </div>
               </div>

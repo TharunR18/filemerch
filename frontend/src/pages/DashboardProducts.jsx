@@ -64,22 +64,22 @@ const DashboardProducts = () => {
         </div>
 
         {products.length > 0 ? (
-          <div className="glass-card animate-fade-in" style={{ padding: 'var(--space-6)' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <div className="glass-card dashboard-card animate-fade-in">
+            <div className="dashboard-table-wrapper">
+              <table className="dashboard-table">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--color-surface-border)' }}>
-                    <th style={{ padding: 'var(--space-3) var(--space-4)', color: 'var(--color-text-muted)', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>Product</th>
-                    <th style={{ padding: 'var(--space-3) var(--space-4)', color: 'var(--color-text-muted)', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>Price</th>
-                    <th style={{ padding: 'var(--space-3) var(--space-4)', color: 'var(--color-text-muted)', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>Sales</th>
-                    <th style={{ padding: 'var(--space-3) var(--space-4)', color: 'var(--color-text-muted)', fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>File Status</th>
-                    <th style={{ padding: 'var(--space-3) var(--space-4)', color: 'var(--color-text-muted)', fontWeight: 600, fontSize: 'var(--font-size-sm)', textAlign: 'right' }}>Actions</th>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Sales</th>
+                    <th>File Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {products.map((product) => (
-                    <tr key={product._id} style={{ borderBottom: '1px solid var(--color-surface-border)' }}>
-                      <td style={{ padding: 'var(--space-4)' }}>
+                    <tr key={product._id}>
+                      <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
                           {product.thumbnail_url ? (
                             <img src={product.thumbnail_url} alt="" style={{ width: '60px', height: '45px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
@@ -96,13 +96,13 @@ const DashboardProducts = () => {
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: 'var(--space-4)', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                      <td style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
                         ₹{product.price}
                       </td>
-                      <td style={{ padding: 'var(--space-4)', color: 'var(--color-text-secondary)' }}>
+                      <td style={{ color: 'var(--color-text-secondary)' }}>
                         {product.total_sales || 0}
                       </td>
-                      <td style={{ padding: 'var(--space-4)' }}>
+                      <td>
                         {product.file_key ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: 'var(--font-size-sm)' }}>
                             <CheckCircle size={16} />
@@ -115,7 +115,7 @@ const DashboardProducts = () => {
                           </div>
                         )}
                       </td>
-                      <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}>
+                      <td style={{ textAlign: 'right' }}>
                         <div style={{ display: 'inline-flex', gap: 'var(--space-2)' }}>
                           <Link to={`/dashboard/products/edit/${product._id}`} className="btn btn-secondary btn-sm" title="Edit Details">
                             <Edit3 size={14} /> Edit
