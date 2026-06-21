@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
 
 // 2. Google Authentication Callback (Redirect URI)
-router.get("/google/callback", passport.authenticate("google", { session: false, failureRedirect: "http://localhost:5173/login?error=oauth_failed" }), googleCallback);
+router.get("/google/callback", passport.authenticate("google", { session: false, failureRedirect: `${process.env.CLIENT_URL || "http://localhost:5173"}/login?error=oauth_failed` }), googleCallback);
 
 // 3. Logout
 router.post("/logout", logout);

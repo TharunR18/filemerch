@@ -10,10 +10,11 @@ export const googleCallback = (req, res) => {
   const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
   // Set HTTP-Only Cookie
+  const isProduction = process.env.NODE_ENV === "production" || (process.env.CLIENT_URL && !process.env.CLIENT_URL.includes("localhost"));
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
 
@@ -21,16 +22,16 @@ export const googleCallback = (req, res) => {
   const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
   res.redirect(`${clientUrl}`);
 }
-
 //Logout and clear token cookie
 export const logout = async (req, res) => {
+  const isProduction = process.env.NODE_ENV === "production" || (process.env.CLIENT_URL && !process.env.CLIENT_URL.includes("localhost"));
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
   return res.json({ success: true, message: "Logged out successfully" });
-}
+};
 
 //Get current user profile (using protect middleware)
 export const getMe = async (req, res) => {
