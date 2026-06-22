@@ -36,12 +36,6 @@ const libraryItemSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Track how many times the buyer has downloaded the file
-    // Useful for analytics; you can also enforce a download limit here
-    download_count: {
-      type: Number,
-      default: 0,
-    },
 
     // When the product was purchased (set to createdAt alias for clarity)
     purchased_at: {
