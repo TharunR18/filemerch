@@ -13,11 +13,7 @@ router.get("/", getActiveProducts);
 router.get("/myProducts", protect, seller, getSellerProducts);
 
 // 3. Create Product (Protected, must be seller)
-router.post(
-  "/",
-  protect,
-  seller,
-  (req, res, next) => {
+router.post("/", protect, seller, (req, res, next) => {
     upload.fields([
       { name: "thumbnail", maxCount: 1 },
       { name: "file", maxCount: 1 }

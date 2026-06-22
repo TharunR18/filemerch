@@ -5,7 +5,7 @@ import Order from "../models/Order.js";
 import OrderItem from "../models/OrderItem.js";
 import LibraryItem from "../models/LibraryItem.js";
 import Product from "../models/Product.js";
-import DownloadHistory from "../models/DownloadHistory.js";
+
 import { generateSignedUrl } from "../services/storageService.js";
 
 // 1. Buy Product (POST /api/purchases/buy/:productId)
@@ -229,11 +229,7 @@ export const downloadProduct = async (req, res) => {
         product.download_count = (product.download_count || 0) + 1;
         await product.save();
 
-        // Log download event in DownloadHistory
-        await DownloadHistory.create({
-            buyer_id,
-            product_id: product._id
-        });
+
 
         res.status(200).json({
             success: true,
