@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -23,6 +25,8 @@ import UploadProductFile from './pages/UploadProductFile';
 const App = () => {
   return (
     <AuthProvider>
+      <Analytics />
+      <SpeedInsights />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>

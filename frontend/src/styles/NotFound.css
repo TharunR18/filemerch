@@ -1,0 +1,102 @@
+.notfound-container {
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.notfound-content {
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+  width: 100%;
+}
+
+.notfound-glitch-wrapper {
+  position: relative;
+  margin-bottom: var(--space-4);
+}
+
+.notfound-code {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #ff4b91 50%, #7b2cbf 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -2px;
+  animation: pulse-glow-text 3s infinite ease-in-out;
+}
+
+.notfound-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10rem;
+  font-weight: 800;
+  letter-spacing: 0.5rem;
+  color: var(--color-text-primary);
+  opacity: 0.03;
+  pointer-events: none;
+  user-select: none;
+  filter: blur(2px);
+}
+
+.notfound-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+.notfound-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-10);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.notfound-actions {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes pulse-glow-text {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(142, 182, 155, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 25px rgba(255, 75, 145, 0.4));
+  }
+}
+
+@media (max-width: 600px) {
+  .notfound-code {
+    font-size: 6rem;
+  }
+  .notfound-bg-text {
+    font-size: 7rem;
+  }
+  .notfound-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .notfound-actions > * {
+    width: 100%;
+  }
+}
