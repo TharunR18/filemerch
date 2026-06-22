@@ -34,64 +34,15 @@ const App = () => {
             <Route path="login" element={<Login />} />
 
             {/* Authenticated Routes */}
-            <Route
-              path="library"
-              element={
-                <ProtectedRoute>
-                  <Library />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="seller/setup"
-              element={
-                <ProtectedRoute>
-                  <SellerSetup />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="library" element={<ProtectedRoute><Library /></ProtectedRoute>}/>
+            <Route path="seller/setup" element={<ProtectedRoute><SellerSetup /></ProtectedRoute>}/>
 
             {/* Seller Routes */}
-            <Route
-              path="dashboard"
-              element={
-                <SellerRoute>
-                  <Dashboard />
-                </SellerRoute>
-              }
-            />
-            <Route
-              path="dashboard/products"
-              element={
-                <SellerRoute>
-                  <DashboardProducts />
-                </SellerRoute>
-              }
-            />
-            <Route
-              path="dashboard/products/create"
-              element={
-                <SellerRoute>
-                  <CreateProduct />
-                </SellerRoute>
-              }
-            />
-            <Route
-              path="dashboard/products/edit/:id"
-              element={
-                <SellerRoute>
-                  <EditProduct />
-                </SellerRoute>
-              }
-            />
-            <Route
-              path="dashboard/products/upload/:id"
-              element={
-                <SellerRoute>
-                  <UploadProductFile />
-                </SellerRoute>
-              }
-            />
+            <Route path="dashboard" element={<SellerRoute><Dashboard /></SellerRoute>}/>
+            <Route path="dashboard/products" element={<SellerRoute><DashboardProducts /></SellerRoute>}/>
+            <Route path="dashboard/products/create" element={<SellerRoute><CreateProduct /></SellerRoute>}/>
+            <Route path="dashboard/products/edit/:id" element={<SellerRoute><EditProduct /></SellerRoute>}/>
+            <Route path="dashboard/products/upload/:id" element={<SellerRoute><UploadProductFile /></SellerRoute>}/>
 
             {/* Fallback */}
             <Route path="*" element={<NotFound />} />

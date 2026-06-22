@@ -158,7 +158,6 @@ const ProductDetails = () => {
     }
   };
 
-
   const handleDownload = async () => {
     try {
       const res = await API.get(`/purchases/download/${product._id}`);
@@ -380,10 +379,6 @@ const ProductDetails = () => {
                 <div className="pd-stat">
                   <span className="pd-stat-value">{product.total_sales || 0}</span>
                   <span className="pd-stat-label">Sales</span>
-                </div>
-                <div className="pd-stat">
-                  <span className="pd-stat-value">{product.download_count || 0}</span>
-                  <span className="pd-stat-label">Downloads</span>
                 </div>
                 {product.file_type && (
                   <div className="pd-stat">
