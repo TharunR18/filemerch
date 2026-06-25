@@ -4,7 +4,7 @@ A full-stack digital marketplace built with the MERN stack where creators can up
 
 ## Screenshot
 
-![FileMerch Home Page](Screenshot.png)
+![FileMerch Home Page](screenshot.png)
 
 ## Live Demo
 
